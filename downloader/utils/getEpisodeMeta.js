@@ -1,25 +1,23 @@
-const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer-extra");
 const StealthPlugin = require("puppeteer-extra-plugin-stealth");
-const puppeteerExtra = require("puppeteer-extra");
-
-puppeteerExtra.use(StealthPlugin());
+puppeteer.use(StealthPlugin());
 
 module.exports = async function getEpisodeMeta(url) {
-  const browser = await puppeteerExtra.launch({
+  const browser = await puppeteer.launch({
     headless: false,
-    executablePath: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
-    args: ["--no-sandbox", "--disable-setuid-sandbox"]
+    executablePath: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe", // 👈 Your Chrome path
+    userDataDir: "C:\\Users\\guruk\\AppData\\Local\\Google\\Chrome\\User Data\\Profile 25",
+    args: ["--no-sandbox", "--disable-setuid-sandbox", "--profile-directory=Profile 25"],
   });
 
   const page = await browser.newPage();
 
   try {
+    console.log("Navigating to:", url);
     await page.goto(url, { waitUntil: "networkidle2", timeout: 0 });
-
-    // OPTIONAL: Take screenshot to verify page loaded
+    console.log("Landed on:", page.url());
     await page.screenshot({ path: "debug.png" });
 
-    // Wait for title if it exists (fallback if not found)
     let title = "Unknown Anime";
     try {
       await page.waitForSelector("h2.anime-title", { timeout: 10000 });
@@ -28,7 +26,6 @@ module.exports = async function getEpisodeMeta(url) {
       console.warn("⚠️ Warning: Anime title not found, using default.");
     }
 
-    // Wait for episode name if available
     let episodeName = "Episode";
     try {
       await page.waitForSelector("div.anime-info h3", { timeout: 10000 });
