@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "HiAnime.to Video Downloader",
+  "version": "1.0",
+  "description": "Download videos from HiAnime.to while watching.",
+  "permissions": ["downloads", "tabs", "scripting", "activeTab"],
+  "host_permissions": ["*://*.hianime.to/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.hianime.to/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "icons": {
+    "128": "icons/icon128.png"
+  }
+}
